@@ -93,15 +93,18 @@ app.get('/get-all-users', (request, response) => {
 app.post('/login', (request, response) => {
 	sqlConnection.query(`SELECT * FROM users WHERE email = '${request.body.email}'`, (err, rows, fields) => {
         const user = rows[0];
-
+    
         setTimeout(() => {
             if(user){
-                if(user.password === request.body.password) {
+                const validPassword = user.password === request.body.password;
+                const validUsername = user.name === request.body.username;
+
+                if(validPassword && validUsername) {
                     response.status(200).send(user);
                 } else {
                     response.status(404).send({
                         status: 404,
-                        message: 'Wrong password, Please try again.'
+                        message: 'Wrong username or password, Please try again.'
                     });
                 }
             } else {
@@ -110,7 +113,7 @@ app.post('/login', (request, response) => {
                     message: 'Wrong email, This user is not exist.'
                 });
             }	 
-        }, 3000);
+        }, 4000);
 	});
 });
 

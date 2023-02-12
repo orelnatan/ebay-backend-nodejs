@@ -155,7 +155,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"gravesoneal@quordate.com\",\n    \"password\": \"6365262813078f369b5d4654\"\n}",
+							"raw": "{\n    \"username\": \"Graves Oneal\",\n    \"email\": \"gravesoneal@quordate.com\",\n    \"password\": \"78freweb5d4654\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
