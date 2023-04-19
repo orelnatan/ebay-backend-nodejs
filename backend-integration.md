@@ -7,6 +7,11 @@
 
     - Then, install MySQL using Homebrew(by https://flaviocopes.com/mysql-how-to-install/)
         * Run the command: brew install mysql
+            - If you still get `zsh: command not found: brew`, follow this link: (search for the solution under the title: "for this error zsh: command not found: brew")
+            https://stackoverflow.com/questions/36657321/after-installing-homebrew-i-get-zsh-command-not-found-brew
+
+            - And try again "brew install mysql" 
+
         * Run the command: brew services start mysql
     
 # Step 2 - Download, install and run MySqlWorkbench.
@@ -32,7 +37,21 @@
         * FLUSH PRIVILEGES;
         * ALTER USER 'root'@'localhost' IDENTIFIED BY 'MyNewPassword';
 
-    * Hit save. and try again "node index.js". Success!!
+    * Hit save. and try again "node index.js".
+
+    - In case you got the following error object:
+    "Error : {
+        "errno": -61,
+        "code": "ECONNREFUSED",
+        "syscall": "connect",
+        "address": "::1",
+        "port": 3306,
+        "fatal": true
+    }"
+
+    * Change the field "host" in "sqlConnection" object in "index.js" file, to have the same value as in the "Host" field under the    "Connection Details" section in the my-sql-workbanch app (open my-sql-workbanch enter the code "1234", find "Object Info" & "Session"  tabs, go to "Session" tab and look at the "Host" field). (in the last case in was "127.0.0.1")  
+
+    * Hit save. and try again "node index.js".
 
 # Step 5 - Run the frontend!.
 
