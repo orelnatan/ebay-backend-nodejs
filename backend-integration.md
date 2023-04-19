@@ -49,7 +49,7 @@
         "fatal": true
     }"
 
-    * Change the field "host" in "sqlConnection" object in "index.js" file, to have the same value as in the "Host" field under the    "Connection Details" section in the my-sql-workbanch app (open my-sql-workbanch enter the code "1234", find "Object Info" & "Session"  tabs, go to "Session" tab and look at the "Host" field). (in the last case in was "127.0.0.1")  
+    * Change the field "host" in "sqlConnection" object in "index.js" file, to have the same value as in the "Host" field under the    "Connection Details" section in the my-sql-workbanch app (open my-sql-workbanch enter the code "1234", find "Object Info" & "Session"  tabs, go to "Session" tab and look at the "Host" field). (in the last case it was "127.0.0.1")  
 
     * Hit save. and try again "node index.js".
 

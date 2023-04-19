@@ -1,133 +1,37 @@
 
 const mysql = require('mysql');
 const express = require('express');
-var app = express();
 const bodyparser = require('body-parser');
+const connectionConfig = require('./consts/connection-config.json');
+
+const users = require("./routes/users");
+const brands = require("./routes/brands");
+const categories = require("./routes/categories");
+const families = require("./routes/families");
+const products = require("./routes/products");
+
+const sqlConnection = mysql.createConnection(connectionConfig);
+const app = express();
+
+const allowCrossDomain = require('./functions/allow-cross-domain');
 
 app.use(bodyparser.json());
+app.use(allowCrossDomain);
 
-var sqlConnection = mysql.createConnection({
-    host: '127.0.0.1',
-    user: 'root',
-    password: '1234',
-    database: 'ebay',
-    multipleStatements: true
+app.use(users);
+app.use(brands);
+app.use(categories);
+app.use(families);
+app.use(products);
+
+app.listen(3001, () => {
+	console.log('Express server is running at port number 3001');
 });
 
 sqlConnection.connect((error) => {
 	if(!error){
-		console.log('DB connection succeded!');
+		console.log('Database connection succeded!');
 	} else {
-		console.log('DB connection failed! \n Error : ' + JSON.stringify(error, undefined, 2));
+		console.log('Database connection failed! \n Error: ' + JSON.stringify(error, undefined, 2));
 	}
 });
-
-// Fix the "Access to XMLHttpRequest at 'http://localhost:3001/getProductById?imdbID=tt1123436' from origin 'http://localhost:4200' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource." problem...
-const allowCrossDomain = function(request, response, next) { 
-    response.header('Access-Control-Allow-Origin', '*');
-    response.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    response.header('Access-Control-Allow-Headers', 'Content-Type');
-  
-    next();
-}
-app.use(allowCrossDomain);
-
-app.listen(3001, () => {
-	console.log('express server is running at port number 3001');
-});
-
-//////////////////////////////////////////////////////////////// API ///////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////// Brands ////////////////////////////////////////////////////////////
-
-// GET all brands.
-app.get('/get-all-brands', (request, response) => {
-	sqlConnection.query('SELECT * FROM brands', (error, rows, fields) => {
-        handleResults(rows, response, 3000, error);
-	})
-});
-
-/////////////////////////////////////////////////////////////// Categories ////////////////////////////////////////////////////////////
-
-// GET categories by brand ID (with params).
-app.get('/get-categories-by-brand-id', (request, response) => {
-	sqlConnection.query(`SELECT * FROM categories WHERE brandId = '${request.query.brandId}'`, (error, rows, fields) => {
-        handleResults(rows, response, 2000, error);
-	});
-});
-
-/////////////////////////////////////////////////////////////// Families ////////////////////////////////////////////////////////////
-
-// GET families by category ID (with params).
-app.get('/get-families-by-category-id', (request, response) => {
-	sqlConnection.query(`SELECT * FROM families WHERE categoryId = '${request.query.categoryId}'`, (error, rows, fields) => {
-        handleResults(rows, response, 2000, error);
-	});
-});
-
-/////////////////////////////////////////////////////////////// Products ////////////////////////////////////////////////////////////
-
-// GET products by family ID (with params).
-app.get('/get-products-by-family-id', (request, response) => {
-	sqlConnection.query(`SELECT * FROM products WHERE familyId = '${request.query.familyId}'`, (error, rows, fields) => {
-        handleResults(rows, response, 2000, error);
-	});
-});
-
-// GET products by name (with params).
-app.get('/get-products-by-name', (request, response) => {
-	sqlConnection.query(`SELECT * FROM products WHERE name LIKE '%${request.query.name}%'`, (error, rows, fields) => {
-        handleResults(rows, response, 2000, error);
-	});
-});
-
-/////////////////////////////////////////////////////////////// Users ///////////////////////////////////////////////////////////////
-
-// GET all users.
-app.get('/get-all-users', (request, response) => {
-	sqlConnection.query('SELECT * FROM users', (error, rows, fields) => {
-        handleResults(rows, response, 4000, error);
-	})
-});
-
-// POST login (with body).
-app.post('/login', (request, response) => {
-	sqlConnection.query(`SELECT * FROM users WHERE email = '${request.body.email}'`, (err, rows, fields) => {
-        const user = rows[0];
-    
-        setTimeout(() => {
-            if(user){
-                const validPassword = user.password === request.body.password;
-                const validUsername = user.name === request.body.username;
-
-                if(validPassword && validUsername) {
-                    response.status(200).send(user);
-                } else {
-                    response.status(404).send({
-                        status: 404,
-                        message: 'Wrong username or password, Please try again.'
-                    });
-                }
-            } else {
-                response.status(404).send({
-                    status: 404,
-                    message: 'Wrong email, This user is not exist.'
-                });
-            }	 
-        }, 4000);
-	});
-});
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-function handleResults(data, response, wait, error) {
-    setTimeout(() => {
-        if(!error){
-            response.status(200).send(data);
-        } else {
-            response.status(404).send({
-                status: 404,
-                message: 'An error has occurred :('
-            });
-        }	
-    }, wait);
-}
