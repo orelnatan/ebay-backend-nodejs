@@ -10,13 +10,13 @@ const getExeption = require('../functions/get-exeption');
 // GET families by category ID (with params).
 router.get('/get-families-by-category-id', (request, response) => {
 	sqlConnection.query(`SELECT * FROM families WHERE categoryId = '${request.query.categoryId}'`, (error, rows, fields) => {
-        setTimeout(() => {
-            if(!error){
-                response.status(200).send(rows);
-            } else {
-                return getExeption(response, 404, 'An error has occurred :(');
-            }	
-        }, 2500);
+    setTimeout(() => {
+      if(!error){
+        response.status(200).send(rows);
+      } else {
+        return getExeption(response, 404, 'An error has occurred :(');
+      }	
+    }, 2500);
 	});
 });
 
